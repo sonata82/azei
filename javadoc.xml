@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" author="true" classpath="lib/swt.jar;lib/Azureus4.3.1.4.jar;lib/junit-4.8.1.jar;lib/mail.jar" destdir="doc" doctitle="Azureus Email Interface" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.remk0.azei.logging,de.remk0.azei.mail,de.remk0.azei.core,de.remk0.azei.azcommand,de.remk0.azei.config,de.remk0.azei.sas" source="1.6" sourcefiles="src/de/remk0/azei/QueueInterfaceFactory.java,src/de/remk0/azei/QueueProcessor.java,src/de/remk0/azei/MailQueueInterface.java,src/de/remk0/azei/AzeiPlugin.java,src/de/remk0/azei/POP3MailQueueInterface.java,src/de/remk0/azei/QueueInterface.java" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

@@ -1,0 +1,17 @@
+Requirements
+------------
+
+The JavaMail API requires the JavaBeans(TM) Activation
+Framework package to be installed as well if you're using JDK 1.5
+or earlier.  Download the latest version of the JavaBeans Activation
+Framework from
+
+	http://java.sun.com/beans/glasgow/jaf.html
+
+and install it in a suitable location or update to the latest JRE/JDK.
+
+
+Installation
+------------
+
+Import using Azureus Plugin Import Wizard, done!
