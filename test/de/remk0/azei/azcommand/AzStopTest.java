@@ -2,7 +2,7 @@
  * azei
  * Azureus Email Interface Plugin
  * 
- * Copyright (C) 2010 Remko Plantenga
+ * Copyright (C) 2012 Remko Plantenga
  * 
  * This file is part of azei.
  * 
