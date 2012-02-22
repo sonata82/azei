@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="azei">
-	
+
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
-	<property name="lib.dir" value="lib"/>
-	<property name="bin.dir" value="bin"/>
-	<property name="src.dir" value="src"/>
-	<property name="test.dir" value="test"/>
-	<property name="target.dir" value="target"/>
-	<property name="docs.dir" value="${target.dir}/docs"/>
-	<property name="reports.dir" value="${target.dir}/reports"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="bin.dir" value="bin"/>
+    <property name="src.dir" value="src"/>
+    <property name="test.dir" value="test"/>
+    <property name="target.dir" value="target"/>
+    <property name="docs.dir" value="${target.dir}/docs"/>
+    <property name="reports.dir" value="${target.dir}/reports"/>
     <property name="artifacts.dir" value="${target.dir}/artifacts"/>
-	
-	<property file="plugin.properties"/>
-	
+
+    <property file="plugin.properties"/>
+
     <path id="classpath.base">
         <pathelement location="${bin.dir}"/>
         <pathelement location="${lib.dir}/Azureus4.3.1.4.jar"/>
@@ -23,78 +23,78 @@
         <pathelement location="${lib.dir}/mail.jar"/>
     </path>
     <path id="classpath.test">
-    	<pathelement location="${lib.dir}/jmock-2.5.1.jar"/>
-    	<pathelement location="${lib.dir}/hamcrest-library-1.1.jar"/>
+        <pathelement location="${lib.dir}/jmock-2.5.1.jar"/>
+        <pathelement location="${lib.dir}/hamcrest-library-1.1.jar"/>
         <pathelement location="${lib.dir}/junit-4.8.1.jar"/>
         <path refid="classpath.base" />
     </path>
-	
-	<target name="compile-test">
-		<echo message="Compiling tests..."/>
+
+    <target name="compile-test">
+        <echo message="Compiling tests..."/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
             <src path="${test.dir}"/>
             <classpath refid="classpath.test"/>
         </javac>
-	</target>
-	
+    </target>
+
     <target name="init">
-    	<echo message="Initialising..."/>
+        <echo message="Initialising..."/>
         <mkdir dir="${target.dir}"/>
-    	<mkdir dir="${reports.dir}"/>
-    	<mkdir dir="${artifacts.dir}"/>
+        <mkdir dir="${reports.dir}"/>
+        <mkdir dir="${artifacts.dir}"/>
     </target>
-	
+
     <target name="clean">
-    	<echo message="Cleaning..."/>
+        <echo message="Cleaning..."/>
         <delete dir="${bin.dir}"/>
-    	<delete dir="${target.dir}"/>
+        <delete dir="${target.dir}"/>
     </target>
-	
+
     <target name="build" depends="compile">
-    	<echo message="Building"/>
-		<jar jarfile="${artifacts.dir}/${ant.project.name}-${plugin.version}.jar" update="true">
-			<fileset dir="${bin.dir}"/>
-			<fileset dir="${src.dir}" includes="**/Messages.properties"/>
-			<fileset dir="." includes="plugin.properties"/>
-			<zipgroupfileset dir="${lib.dir}" includes="mail.jar"/>
-		</jar>
-	</target>
-	
+        <echo message="Building"/>
+        <jar jarfile="${artifacts.dir}/${ant.project.name}-${plugin.version}.jar" update="true">
+            <fileset dir="${bin.dir}"/>
+            <fileset dir="${src.dir}" includes="**/Messages.properties"/>
+            <fileset dir="." includes="plugin.properties"/>
+            <zipgroupfileset dir="${lib.dir}" includes="mail.jar"/>
+        </jar>
+    </target>
+
     <target name="compile" depends="init">
-    	<echo message="Compiling..."/>
+        <echo message="Compiling..."/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
             <src path="${src.dir}"/>
             <classpath refid="classpath.base"/>
         </javac>
     </target>
-	
+
     <target name="javadoc" depends="init">
-    	<echo message="Creating javadoc..."/>
+        <echo message="Creating javadoc..."/>
         <javadoc access="public" 
-        	author="true" 
-        	classpath="classpath.base" 
-        	destdir="${docs.dir}" 
-        	doctitle="Azureus Email Interface" 
-        	nodeprecated="false" 
-        	nodeprecatedlist="false" 
-        	noindex="false" nonavbar="false" notree="false" 
-        	source="${source}" 
-        	link="http://cdn01.vuze.com/site/dev/javadoc/Vuze_4703-18/"
-        	sourcepath="${src.dir}" splitindex="true" use="true" version="true">
+            author="true" 
+            classpath="classpath.base" 
+            destdir="${docs.dir}" 
+            doctitle="Azureus Email Interface" 
+            nodeprecated="false" 
+            nodeprecatedlist="false" 
+            noindex="false" nonavbar="false" notree="false" 
+            source="${source}" 
+            link="http://cdn01.vuze.com/site/dev/javadoc/Vuze_4703-18/"
+            sourcepath="${src.dir}" splitindex="true" use="true" version="true">
             <classpath refid="classpath.base"/>
-    	</javadoc>
+        </javadoc>
     </target>
-	
-	<target name="test" depends="compile, compile-test">
-		<echo message="Testing..."/>
-		<junit printsummary="on">
+
+    <target name="test" depends="compile, compile-test">
+        <echo message="Testing..."/>
+        <junit printsummary="on">
             <classpath refid="classpath.test"/>
-			<batchtest todir="${reports.dir}">
-				<fileset dir="${bin.dir}">
-			        <include name="**/*Test.class"/>
-				</fileset>
-			</batchtest>
-			<formatter type="xml"/>
-		</junit>
-	</target>
+            <batchtest todir="${reports.dir}">
+                <fileset dir="${bin.dir}">
+                    <include name="**/*Test.class"/>
+                </fileset>
+            </batchtest>
+            <formatter type="xml"/>
+        </junit>
+    </target>
 </project>
