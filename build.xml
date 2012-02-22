@@ -10,85 +10,91 @@
 	<property name="src.dir" value="src"/>
 	<property name="test.dir" value="test"/>
 	<property name="target.dir" value="target"/>
-	<property name="doc.dir" value="doc"/>
+	<property name="docs.dir" value="${target.dir}/docs"/>
+	<property name="reports.dir" value="${target.dir}/reports"/>
+    <property name="artifacts.dir" value="${target.dir}/artifacts"/>
 	
-    <path id="azei.classpath">
+	<property file="plugin.properties"/>
+	
+    <path id="classpath.base">
         <pathelement location="${bin.dir}"/>
         <pathelement location="${lib.dir}/Azureus4.3.1.4.jar"/>
         <pathelement location="${lib.dir}/swt.jar"/>
         <pathelement location="${lib.dir}/mail.jar"/>
+    </path>
+    <path id="classpath.test">
+    	<pathelement location="${lib.dir}/jmock-2.5.1.jar"/>
+    	<pathelement location="${lib.dir}/hamcrest-library-1.1.jar"/>
         <pathelement location="${lib.dir}/junit-4.8.1.jar"/>
+        <path refid="classpath.base" />
     </path>
 	
+	<target name="compile-test">
+		<echo message="Compiling tests..."/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
+            <src path="${test.dir}"/>
+            <classpath refid="classpath.test"/>
+        </javac>
+	</target>
+	
     <target name="init">
-        <mkdir dir="${bin.dir}"/>
-        <copy includeemptydirs="false" todir="${bin.dir}">
-            <fileset dir="${src.dir}">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="${bin.dir}">
-            <fileset dir="${test.dir}">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    	<copy includeemptydirs="false" todir="${bin.dir}" flatten="true">
-            <fileset dir=".">
-                <include name="**/INSTALL"/>
-            	<include name="**/LICENSE"/>
-            	<include name="**/README"/>
-            </fileset>
-        </copy>
+    	<echo message="Initialising..."/>
+        <mkdir dir="${target.dir}"/>
+    	<mkdir dir="${reports.dir}"/>
+    	<mkdir dir="${artifacts.dir}"/>
     </target>
 	
     <target name="clean">
+    	<echo message="Cleaning..."/>
         <delete dir="${bin.dir}"/>
-    	<delete>
-    		<fileset dir="${target.dir}" includes="**/*" defaultexcludes="false"/>
-    	</delete>
-		<delete>
-    		<fileset dir="${doc.dir}" includes="**/*" defaultexcludes="false"/>
-    	</delete>    	
+    	<delete dir="${target.dir}"/>
     </target>
 	
-    <target name="cleanall" depends="clean"/>
-	
-    <target name="build" depends="build-subprojects,build-project">
-		<jar jarfile="${target.dir}/${ant.project.name}.jar" update="true">
+    <target name="build" depends="compile">
+    	<echo message="Building"/>
+		<jar jarfile="${artifacts.dir}/${ant.project.name}-${plugin.version}.jar" update="true">
 			<fileset dir="${bin.dir}"/>
+			<fileset dir="${src.dir}" includes="**/Messages.properties"/>
+			<fileset dir="." includes="plugin.properties"/>
+			<zipgroupfileset dir="${lib.dir}" includes="mail.jar"/>
 		</jar>
 	</target>
 	
-    <target name="build-subprojects"/>
-	
-    <target name="build-project" depends="init">
-        <echo message="${ant.project.name}: ${ant.file}"/>
+    <target name="compile" depends="init">
+    	<echo message="Compiling..."/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
             <src path="${src.dir}"/>
-            <classpath refid="azei.classpath"/>
-        </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
-            <src path="${test.dir}"/>
-            <classpath refid="azei.classpath"/>
+            <classpath refid="classpath.base"/>
         </javac>
     </target>
 	
-    <target name="build-refprojects" description="Build all projects which reference this project. Useful to propagate changes."/>
-	
-    <target name="javadoc">
+    <target name="javadoc" depends="init">
+    	<echo message="Creating javadoc..."/>
         <javadoc access="public" 
         	author="true" 
-        	classpath="azei.classpath" 
-        	destdir="${doc.dir}" 
+        	classpath="classpath.base" 
+        	destdir="${docs.dir}" 
         	doctitle="Azureus Email Interface" 
         	nodeprecated="false" 
         	nodeprecatedlist="false" 
         	noindex="false" nonavbar="false" notree="false" 
-        	packagenames="de.remk0.azei.logging,de.remk0.azei.mail,de.remk0.azei.core,de.remk0.azei.azcommand,de.remk0.azei.config,de.remk0.azei.sas" 
         	source="${source}" 
-        	sourcefiles="src/de/remk0/azei/QueueInterfaceFactory.java,src/de/remk0/azei/QueueProcessor.java,src/de/remk0/azei/MailQueueInterface.java,src/de/remk0/azei/AzeiPlugin.java,src/de/remk0/azei/POP3MailQueueInterface.java,src/de/remk0/azei/QueueInterface.java" 
-        	sourcepath="${src.dir}" splitindex="true" use="true" version="true"/>
-    </target>	
+        	link="http://cdn01.vuze.com/site/dev/javadoc/Vuze_4703-18/"
+        	sourcepath="${src.dir}" splitindex="true" use="true" version="true">
+            <classpath refid="classpath.base"/>
+    	</javadoc>
+    </target>
+	
+	<target name="test" depends="compile, compile-test">
+		<echo message="Testing..."/>
+		<junit printsummary="on">
+            <classpath refid="classpath.test"/>
+			<batchtest todir="${reports.dir}">
+				<fileset dir="${bin.dir}">
+			        <include name="**/*Test.class"/>
+				</fileset>
+			</batchtest>
+			<formatter type="xml"/>
+		</junit>
+	</target>
 </project>
