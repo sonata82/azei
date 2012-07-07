@@ -17,16 +17,14 @@
     <property file="plugin.properties"/>
 
     <path id="classpath.base">
-        <pathelement location="${bin.dir}"/>
-        <pathelement location="${lib.dir}/Azureus4.3.1.4.jar"/>
-        <pathelement location="${lib.dir}/swt.jar"/>
-        <pathelement location="${lib.dir}/mail.jar"/>
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
     </path>
+    
     <path id="classpath.test">
-        <pathelement location="${lib.dir}/jmock-2.5.1.jar"/>
-        <pathelement location="${lib.dir}/hamcrest-library-1.1.jar"/>
-        <pathelement location="${lib.dir}/junit-4.8.1.jar"/>
-        <path refid="classpath.base" />
+        <pathelement location="${bin.dir}" />
+        <path refid="classpath.base"/>
     </path>
 
     <target name="compile-test">
@@ -90,6 +88,7 @@
         <echo message="Testing..."/>
         <junit printsummary="on">
             <classpath refid="classpath.test"/>
+            
             <batchtest todir="${reports.dir}">
                 <fileset dir="${bin.dir}">
                     <include name="**/*Test.class"/>
