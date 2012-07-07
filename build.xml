@@ -42,6 +42,7 @@
         <mkdir dir="${target.dir}"/>
         <mkdir dir="${reports.dir}"/>
         <mkdir dir="${artifacts.dir}"/>
+        <mkdir dir="${bin.dir}"/>
     </target>
 
     <target name="clean">
