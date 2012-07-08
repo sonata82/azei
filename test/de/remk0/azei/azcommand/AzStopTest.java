@@ -24,72 +24,41 @@ package de.remk0.azei.azcommand;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.gudy.azureus2.plugins.PluginInterface;
 import org.gudy.azureus2.plugins.download.Download;
-import org.gudy.azureus2.plugins.download.DownloadManager;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.junit.Before;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Test;
-
-import de.remk0.azei.azcommand.AzDownloadByState.STATES;
+import org.junit.runner.RunWith;
 
 /**
  * @author Remko Plantenga
  * 
  */
-public class AzStopTest {
-
-    private Mockery context = new Mockery();
-    private IAzCommand azcommand;
-    private PluginInterface mockedPluginInterface;
-    private DownloadManager mockedDownloadManager;
-
-    @Before
-    public void prepare() {
-        azcommand = new AzStop(STATES.SEED, 2);
-        mockedPluginInterface = this.context.mock(PluginInterface.class);
-        mockedDownloadManager = this.context.mock(DownloadManager.class);
-
-        this.context.checking(new Expectations() {
-            {
-                allowing(mockedPluginInterface).getDownloadManager();
-                will(returnValue(mockedDownloadManager));
-            }
-        });
-    }
+@RunWith(JMock.class)
+public class AzStopTest extends AzBaseTest {
 
     @Test
     public void testExecuteInvalidIndex() {
-        final Download[] downloads = new Download[] { createDownload(1, false) };
+
+        final Download[] downloads = new Download[] { createDownloadMock(1, false) };
+
         this.context.checking(new Expectations() {
             {
                 allowing(mockedDownloadManager).getDownloads();
                 will(returnValue(downloads));
             }
         });
+
         boolean success = azcommand.execute(mockedPluginInterface);
         assertFalse(success);
     }
 
-    private Download createDownload(final int index, final boolean isCompleted) {
-        final Download d1 = this.context.mock(Download.class, "d" + isCompleted
-                + index);
-        this.context.checking(new Expectations() {
-            {
-                allowing(d1).getPosition();
-                will(returnValue(index));
-                allowing(d1).isComplete();
-                will(returnValue(isCompleted));
-            }
-        });
-        return d1;
-    }
-
     @Test
     public void testExecute() throws Exception {
-        final Download[] downloads = new Download[] { createDownload(1, false),
-                createDownload(1, true), createDownload(2, true) };
+
+        final Download[] downloads = new Download[] { createDownloadMock(1, false),
+                createDownloadMock(1, true), createDownloadMock(2, true) };
+
         this.context.checking(new Expectations() {
             {
                 allowing(mockedDownloadManager).getDownloads();
@@ -97,6 +66,7 @@ public class AzStopTest {
                 oneOf(downloads[2]).stop();
             }
         });
+
         boolean success = azcommand.execute(mockedPluginInterface);
         assertTrue(success);
     }

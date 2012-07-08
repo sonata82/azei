@@ -21,11 +21,10 @@
  */
 package de.remk0.azei.azcommand;
 
-import org.gudy.azureus2.plugins.PluginInterface;
+import static org.junit.Assert.assertTrue;
+
 import org.gudy.azureus2.plugins.download.Download;
-import org.gudy.azureus2.plugins.download.DownloadManager;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,41 +38,24 @@ import de.remk0.azei.azcommand.AzSet.VARIABLE;
  * 
  */
 @RunWith(JMock.class)
-public class AzSetTest {
-
-    private Mockery context = new Mockery();
-    private PluginInterface mockedPluginInterface;
-    private DownloadManager mockedDownloadManager;
-    private IAzCommand azcommand;
-
-    private Download createDownload(final int index, final boolean isCompleted) {
-        final Download d1 = this.context.mock(Download.class, "d" + isCompleted
-                + index);
-        this.context.checking(new Expectations() {
-            {
-                allowing(d1).getPosition();
-                will(returnValue(index));
-                allowing(d1).isComplete();
-                will(returnValue(isCompleted));
-            }
-        });
-        return d1;
-    }
+public class AzSetTest extends AzBaseTest {
 
     @Test
     public void testExecute() {
+
         azcommand = new AzSet(STATES.DOWNLOAD, 2, VARIABLE.LIMIT,
                 OPTION.DOWNLOAD, 20);
-        mockedPluginInterface = this.context.mock(PluginInterface.class);
-        mockedDownloadManager = this.context.mock(DownloadManager.class);
-        final Download dl = createDownload(2, false);
+
+        final Download dl = createDownloadMock(2, false);
         this.context.checking(new Expectations() {
             {
                 allowing(dl).setDownloadRateLimitBytesPerSecond(20);
             }
         });
-        final Download[] downloads = new Download[] { createDownload(1, false),
-                dl, createDownload(3, false) };
+
+        final Download[] downloads = new Download[] { createDownloadMock(1, false),
+                dl, createDownloadMock(3, false) };
+
         this.context.checking(new Expectations() {
             {
                 allowing(mockedDownloadManager).getDownloads();
@@ -86,7 +68,9 @@ public class AzSetTest {
                 will(returnValue(mockedDownloadManager));
             }
         });
-        azcommand.execute(mockedPluginInterface);
+
+        boolean success = azcommand.execute(mockedPluginInterface);
+        assertTrue(success);
     }
 
 }
